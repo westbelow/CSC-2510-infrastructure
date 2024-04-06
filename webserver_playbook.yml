@@ -1,0 +1,16 @@
+---
+- hosts: all 
+  become: yes
+  
+  - name: Update APT
+      ansible.builtin.apt:
+        update_cache: true
+ 
+  - name: Install Python
+      ansible.builtin.package:
+         name: python-apt
+         state: present
+  - name: Install Apache
+        ansible.builtin.package:
+         name: apache2
+         state: present
