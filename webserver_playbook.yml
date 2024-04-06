@@ -14,3 +14,10 @@
         ansible.builtin.package:
          name: apache2
          state: present
+  - name: Symbolic Link
+        ansible.builtin.file:
+        state: Link
+   -name: restart apache2
+        ansible.builtin.service:
+        name: apache2
+        state: restarted
