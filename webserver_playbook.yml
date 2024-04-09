@@ -16,6 +16,8 @@
          state: present
   - name: Symbolic Link
         ansible.builtin.file:
+        src: /etc/apache2/mods-available/headers.load
+        dest: /etc/apache2/mods-enabled/headers.load
         state: Link
    -name: restart apache2
         ansible.builtin.service:
