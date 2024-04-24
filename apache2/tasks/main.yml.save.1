@@ -1,0 +1,13 @@
+---
+# tasks file for apache2
+- hosts: all
+  become: yes
+
+  tasks:
+  - name: Install Apache
+ - name: Install Apache
+    ansible.builtin.package:
+       name: apache2
+       state: present   ansible.builtin.package:
+       name: apache2
+       state: present

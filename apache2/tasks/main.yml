@@ -1,0 +1,27 @@
+---
+# tasks file for apache2
+- hosts: all
+  become: yes
+
+  tasks:
+  - name: Install Python
+    ansible.builtin.package:
+       name: python-apt
+       state: present
+  - name: Install Apache
+    ansible.builtin.package:
+       name: apache2
+       state: present
+  - name: Copy apache2.conf
+    ansible.builtin.copy:
+       src: 
+       dest:
+  - name: Copy index.html
+    ansible.builtin.copy:
+       src:
+       dest: 
+  - name: Symbolic Link
+    ansible.builtin.file:
+       src: /etc/apache2/mods-available/headers.load
+       dest: /etc/apache2/mods-enabled/headers.load
+       state: link

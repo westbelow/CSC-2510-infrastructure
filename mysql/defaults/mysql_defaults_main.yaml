@@ -1,0 +1,7 @@
+---
+mysql_root_password: "secure_password"
+mysql_user: "" # this is your GCP username.  Remember, no periods!
+mysql_password: "secure_password"
+mysql_database: "devops"
+mysql_import_data: false
+mysql_sql_file: "example_db.sql"

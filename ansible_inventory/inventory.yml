@@ -1,3 +1,6 @@
 webservers:
   hosts:
     10.142.0.5
+db: 
+  hosts:
+    10.142.0.7
