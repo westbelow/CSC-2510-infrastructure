@@ -27,10 +27,14 @@ tasks:
 
 - name: Copy update script to the server
 # TODO 
+  ansible.builtin.copy
+  src: password_set.sh
+  dest: /etc/password_set.sh
+  mode: 0777
 
 - name: Execute the script
 # TODO
-
+  ansible.b..
 - name: Output result from script
 # TODO
 
