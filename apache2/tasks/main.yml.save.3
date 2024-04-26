@@ -37,9 +37,7 @@
     ansible.builtin.package:
        name: php-mysql
        state: present
-  - name: call Handler
-    service: 
-      command: "Restarting apache2"
-      notify: "restart Apache2"
+
+
     
 
