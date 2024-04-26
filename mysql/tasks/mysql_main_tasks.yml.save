@@ -1,0 +1,72 @@
+---
+- name: Check for Python3 and pip in Debian Linux
+  apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+  when: ansible_facts['os_family'] != "Debian"  
+# DONE: this task should only run if the OS is Debian based
+tasks:
+
+- name: Install PyMySQL
+  pip:
+    name: pymysql
+    executable: pip3
+
+- name: Install MySQL server
+  apt:
+    name: mysql-server
+    state: present
+
+- name: Start MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Copy update script to the server
+# TODO 
+  ansible.builtin.copy:
+  src: password_set.sh
+  dest: /etc/password_set.sh
+  mode: 0777
+
+- name: Execute the script
+# TODO
+  ansible.builtin.shell: password_set.sh >> passlog.txt
+  args:
+   chdir: /etc/
+  register: result
+- name: Output result from script
+# TODO
+  ansible.builtin.debug:
+   var: result
+- name: Clean up - remove the script from the remote server
+# TODO
+   ansible.builtin.file:
+   path: /etc/password_set.sh
+   state: absent
+- name: Create MySQL database
+# TODO
+   
+- name: Create MySQL user
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    host: "%"
+    priv: "{{ mysql_database }}.*:ALL"
+    state: present
+
+- name: Copy SQL file to remote host
+# TODO - this should only be run if mysql_import_data is true
+
+- name: Import SQL data
+# TODO
+
+- name: Update MySQL bind-address and mysqlx-bind-address to allow external connections
+# TODO - this can be done in a single task or broken into two tasks, one per line
+# Use notify to restart mysql once complete.
+

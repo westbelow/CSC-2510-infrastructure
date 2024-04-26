@@ -14,14 +14,30 @@
        state: present
   - name: Copy apache2.conf
     ansible.builtin.copy:
-       src: 
-       dest:
+       src: apache2.conf
+       dest: /etc/apache2.conf
   - name: Copy index.html
     ansible.builtin.copy:
-       src:
-       dest: 
+       src: index.html
+       dest: /etc/index.html
   - name: Symbolic Link
     ansible.builtin.file:
        src: /etc/apache2/mods-available/headers.load
        dest: /etc/apache2/mods-enabled/headers.load
        state: link
+  - name: install other packages
+    ansible.builtin.package:
+       name: php
+       state: present
+  - name: install other packages
+    ansible.builtin.package:
+       name: libapache2-mod-php
+       state: present
+  - name: install other packages
+    ansible.builtin.package:
+       name: php-mysql
+       state: present
+
+  - name: restart apache2 with handler
+    
+

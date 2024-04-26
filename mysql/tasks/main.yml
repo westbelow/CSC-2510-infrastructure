@@ -1,2 +1,87 @@
 ---
-# tasks file for mysql
+- name: Check for Python3 and pip in Debian Linux
+  apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install PyMySQL
+  pip:
+    name: pymysql
+    executable: pip3
+
+- name: Install MySQL server
+  apt:
+    name: mysql-server
+    state: present
+
+- name: Start MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Copy update script to the server
+  copy:
+    src: update_mysql_root.sh
+    dest: /tmp/update_mysql_root.sh
+    mode: '0755'
+
+- name: Execute the script
+  shell: /tmp/update_mysql_root.sh "{{ mysql_root_password }}"
+  register: script_output
+
+- name: Output result from script
+  debug:
+    msg: "{{ script_output.stdout_lines }}"
+
+- name: Clean up - remove the script from the remote server
+  file:
+    path: /tmp/update_mysql_root.sh
+    state: absent
+
+- name: Create MySQL database
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ mysql_database }}"
+    state: present
+
+- name: Create MySQL user
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    host: "%"
+    priv: "{{ mysql_database }}.*:ALL"
+    state: present
+
+- name: Copy SQL file to remote host
+  copy:
+    src: "{{ mysql_sql_file }}"
+    dest: ~"{{ mysql_sql_file }}"
+  when: mysql_import_data
+
+- name: Import SQL data
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ mysql_database }}"
+    state: import
+    target: ~"{{ mysql_sql_file }}"
+  when: mysql_import_data
+
+- name: Update MySQL bind-address and mysqlx-bind-address to allow external connections
+  lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^{{ item.regexp }}'
+    line: '{{ item.line }}'
+    state: present
+  loop:
+    - { regexp: '^bind-address\s*=\s*127\.0\.0\.1', line: 'bind-address = 0.0.0.0' }
+    - { regexp: '^mysqlx-bind-address\s*=\s*127\.0\.0\.1', line: 'mysqlx-bind-address = 0.0.0.0' }
+  notify: restart mysql
+
